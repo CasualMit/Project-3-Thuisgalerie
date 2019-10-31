@@ -41,7 +41,10 @@ class App:
     def start(self):
         self.show_start_frame()
         self.root.mainloop()
-    
+
+#
+# Begin scherm bezoeker of gallerie houder
+#
     def create_start_frame(self):
         start_frame = Frame(master=self.root)
         start_frame.pack(fill="both", expand=True)
@@ -50,19 +53,16 @@ class App:
                            command=self.show_visitor_frame)
         Buttonone.pack(side="left")
 
-        Buttontwo = Button(master=start_frame, text="Gallery Holder", background='blue', foreground='black',
+        Buttontwo = Button(master=start_frame, text="Gallerie Houder", background='blue', foreground='black',
                            font=('Helvetica', 16, 'bold italic'), width=30, height=30,
                            command=self.show_visitor_frame)
         Buttontwo.pack(side="left")
 
-        loginfield = Entry(master=start_frame)
-        loginfield.pack(padx=20, pady=20)
-
-        # loginbutton = Button(master=start_frame, text='login', command=logingh)
-        # loginbutton.pack(padx=20, pady=20)
-
         return start_frame
-    
+
+#
+# Dit is het login scherm van de bezoeker
+#
     def create_visitor_frame(self):
         visitor_frame = Frame(master=self.root)
         visitor_frame.pack(fill="both", expand=True)
@@ -84,7 +84,10 @@ class App:
 
         email_field = Entry(master=visitor_frame)
         email_field.pack(padx=20, pady=20, side="left")
-        
+
+#
+# Hier moet de werkende funcite die voor de login van de bezoeker is
+#
         def handle_login_button():
             print(f"naam: {name_field.get()} email: {email_field.get()}")
             # if iets???
@@ -94,7 +97,10 @@ class App:
         login_button.pack(padx=20, pady=20)
 
         return visitor_frame
-        
+
+#
+# Hier moet alle stukken komen waar ze naar toe kunnen
+#
     def create_art_frame(self):
         art_frame = Frame(master=self.root)
         art_frame.pack(fill="both", expand=True)
