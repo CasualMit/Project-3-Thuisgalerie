@@ -5,14 +5,14 @@ def keuzeframe():
    startframe.pack() #Toon
 
 
-def toonHoofdFrame():
+def toonGHFrame():
    startframe.pack_forget() #Verberg
    hoofdframe.pack() #Toon
 
 
 def logingh():
    if loginfield.get() == "admin":
-       toonHoofdFrame()
+       toonGHFrame()
    else:
        print('Verkeerde gebruikersnaam!')
 
@@ -24,12 +24,12 @@ startframe = Frame(master=root)
 startframe.pack(fill="both", expand=True)
 Buttonone = Button(master=startframe, text="Bezoeker", background='red', foreground='black',
                     font=('Helvetica', 16, 'bold italic'), width=30, height=30,
-                    command=toonHoofdFrame)
+                    command=toonGHFrame)
 Buttonone.pack(side="left")
 
 Buttontwo = Button(master=startframe, text="Gallery Holder", background='blue', foreground='black',
                     font=('Helvetica', 16, 'bold italic'), width=30, height=30,
-                   command=toonHoofdFrame)
+                   command=toonGHFrame)
 Buttontwo.pack(side="left")
 
 loginfield = Entry(master=startframe)
@@ -44,6 +44,8 @@ hoofdframe = Frame(master=root)
 hoofdframe.pack(fill="both", expand=True)
 
 
+button = Button(master=hoofdframe, text="fuck you")
+button.pack()
 backbutton = Button(master=hoofdframe, text='<', command=keuzeframe)
 backbutton.pack(padx=20, pady=20)
 
