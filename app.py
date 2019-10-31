@@ -10,12 +10,13 @@ class App:
 
         self.root = Tk()
         self.root.title(title)
-        self.root.geometry("800x740+500+110")
+        self.root.geometry("800x730+500+110")
 
         self.frames = {
             'start': self.create_start_frame(),
             'visitor': self.create_visitor_frame(),
-            'art': self.create_art_frame()
+            'art': self.create_art_frame(),
+            'houder': self.create_ghouder_frame()
         }
 
     def hide_frames(self):
@@ -26,17 +27,21 @@ class App:
     #     self.hide_frames()
     #     self.frames[name].pack()
 
-    def show_visitor_frame(self):
-        self.hide_frames()
-        self.frames['visitor'].pack()
-
     def show_start_frame(self):
         self.hide_frames()
         self.frames['start'].pack()
 
+    def show_visitor_frame(self):
+        self.hide_frames()
+        self.frames['visitor'].pack()
+
     def show_art_frame(self):
         self.hide_frames()
         self.frames['art'].pack()
+
+    def show_ghouder_frame(self):
+        self.hide_frames()
+        self.frames['houder'].pack()
 
     def start(self):
         self.show_start_frame()
@@ -55,7 +60,7 @@ class App:
 
         Buttontwo = Button(master=start_frame, text="Gallerie Houder", background='blue', foreground='black',
                            font=('Helvetica', 16, 'bold italic'), width=30, height=30,
-                           command=self.show_visitor_frame)
+                           command=self.show_ghouder_frame)
         Buttontwo.pack(side="left")
 
         return start_frame
@@ -109,6 +114,35 @@ class App:
         backbutton.pack(padx=20, pady=20)
 
         return art_frame
+
+#
+# Dit is het login scherm van de gallerie houder
+#
+    def create_ghouder_frame(self):
+        ghouder_frame = Frame(master=self.root)
+        ghouder_frame.pack(fill="both", expand=True)
+
+        backbutton = Button(master=ghouder_frame, text='<', command=self.show_start_frame)
+        backbutton.pack(padx=20, pady=20)
+
+        ID_label = Label(master=ghouder_frame, text="Uw gallerie ID")
+        ID_label.pack(side="left")
+
+        ID_field = Entry(master=ghouder_frame)
+        ID_field.pack(padx=20, pady=20, side="left")
+
+#
+# Hier moet de werkende funcite die voor de login van de gallerie houder is
+#
+        def handle_login_button():
+            print(f"ID: {ID_field.get()}")
+            # if iets???
+            self.show_art_frame()
+
+        login_button = Button(master=ghouder_frame, text='Login', command=handle_login_button)
+        login_button.pack(padx=20, pady=20)
+
+        return ghouder_frame
 
 
 app = App("Rijksmuseum")
