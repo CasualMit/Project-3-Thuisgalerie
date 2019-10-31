@@ -37,6 +37,7 @@ def request(objects):
         with open('cache.txt') as json_file:
             cache = json.load(json_file)
         if type(cache) is dict and cache.get('formatted') is not None:
+            print('File cache.txt is ready to use!')
             break
         else:
             new_format = dict()
@@ -49,11 +50,11 @@ def request(objects):
             new_format['formatted'] = True
             with open('cache.txt', 'w') as outfile:
                 json.dump(new_format, outfile)
-            print('used the old cache!')
-            break
+            print('Made the request usable!')
+            continue
     while not check:
         api_request(objects)
-        print('Fetched a new cache!')
+        print('Made a new request from the api!')
         request('artObjects')
         break
 
