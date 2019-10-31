@@ -1,8 +1,11 @@
 import requests
 import pprint
 import json
+import os
+import time
+# api_request('artObjects')
 
-def api_request(key, cached=True):
+def api_request(key):
     apikey = 'oh7gzUCb'
     apiurl = 'https://www.rijksmuseum.nl/api/nl/collection'
     params = dict(key=apikey, ps=2, format='json')
@@ -11,27 +14,49 @@ def api_request(key, cached=True):
     pieces = res[key]
     with open('cache.txt', 'w') as outfile:
         json.dump(pieces, outfile)
-    return
 
 
-def api_filter():
-    with open('cache.txt') as json_file:
-        cache = json.load(json_file)
-    new_format = dict()
-    for item in cache:
-        art_data = dict()
-        art_data['titel'] = item['title']
-        art_data['artiest'] = item['principalOrFirstMaker']
-        art_data['image'] = item['webImage']['url']
-        new_format[item['id']] = art_data
-    with open('request.txt', 'w') as outfile:
-        json.dump(new_format, outfile)
-    return
+def check_cache(filename, key='artObjects'):
+    # check if the cache is older than an hour to prevent too many api calls
+    if os.path.isfile(filename):
+        creation_time = os.path.getmtime(filename)
+        now = time.time()
+        age_seconds = now - creation_time
+        # if the cache is older than 1 hour GET new data
+        if age_seconds > 3600:
+            return False
+        else:
+            return True
+    else:
+        api_request(key)
 
-def new_request():
-    with open('cache.txt') as json_file:
-        cache = json.load(json_file)
-# check create date cache.txt
 
-print(api_request('artObjects', cached=False))
-print(api_filter())
+def request(objects):
+    check = check_cache('cache.txt')
+    while check:
+        with open('cache.txt') as json_file:
+            cache = json.load(json_file)
+        if type(cache) is dict and cache.get('formatted') is not None:
+            break
+        else:
+            new_format = dict()
+            for item in cache:
+                art_data = dict()
+                art_data['titel'] = item['title']
+                art_data['artiest'] = item['principalOrFirstMaker']
+                art_data['image'] = item['webImage']['url']
+                new_format[item['id']] = art_data
+            new_format['formatted'] = True
+            with open('cache.txt', 'w') as outfile:
+                json.dump(new_format, outfile)
+            print('used the old cache!')
+            break
+    while not check:
+        api_request(objects)
+        print('Fetched a new cache!')
+        request('artObjects')
+        break
+
+
+request('artObjects')
+
