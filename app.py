@@ -1,5 +1,9 @@
-#Version 2 Cleaner
+#
+# Version 2 Cleaner
+#
+
 from tkinter import *
+from api import *
 
 
 class App:
@@ -16,7 +20,9 @@ class App:
             'start': self.create_start_frame(),
             'visitor': self.create_visitor_frame(),
             'art': self.create_art_frame(),
-            'houder': self.create_ghouder_frame()
+            'houder': self.create_ghouder_frame(),
+            'ghmenu': self.create_ghmenu_frame(),
+            'bstukken': self.create_bstukken_frame()
         }
 
     def hide_frames(self):
@@ -42,6 +48,14 @@ class App:
     def show_ghouder_frame(self):
         self.hide_frames()
         self.frames['houder'].pack()
+
+    def show_ghmenu_frame(self):
+        self.hide_frames()
+        self.frames['ghmenu'].pack()
+
+    def show_bstukken_frame(self):
+        self.hide_frames()
+        self.frames['bstukken'].pack()
 
     def start(self):
         self.show_start_frame()
@@ -132,17 +146,66 @@ class App:
         ID_field.pack(padx=20, pady=20, side="left")
 
 #
-# Hier moet de werkende funcite die voor de login van de gallerie houder is
+# Hier moet de werkende funcite die voor de login van de gallerie houder is1
 #
         def handle_login_button():
             print(f"ID: {ID_field.get()}")
             # if iets???
-            self.show_art_frame()
+            self.show_ghmenu_frame()
 
         login_button = Button(master=ghouder_frame, text='Login', command=handle_login_button)
         login_button.pack(padx=20, pady=20)
 
         return ghouder_frame
+
+#
+# Menu voor de gallerie houder
+#
+    def create_ghmenu_frame(self):
+        ghmenu_frame = Frame(master=self.root)
+        ghmenu_frame.pack(fill="both", expand=True)
+        Buttonone = Button(master=ghmenu_frame, text="Beschikbare stukken", background='green', foreground='black',
+                           font=('Helvetica', 16, 'bold italic'), width=20, height=30,
+                           command=self.show_bstukken_frame)
+        Buttonone.pack(side="left")
+
+        Buttontwo = Button(master=ghmenu_frame, text="Mijn stukken", background='yellow', foreground='black',
+                           font=('Helvetica', 16, 'bold italic'), width=20, height=30,
+                           command=self.show_ghouder_frame)
+        Buttontwo.pack(side="left")
+
+        Buttonthree = Button(master=ghmenu_frame, text="Bezoekers", background='orange', foreground='black',
+                           font=('Helvetica', 16, 'bold italic'), width=20, height=30,
+                           command=self.show_ghouder_frame)
+        Buttonthree.pack(side="left")
+
+        return ghmenu_frame
+
+    def create_bstukken_frame(self):
+        bstukken_frame = Frame(master=self.root)
+        bstukken_frame.pack(fill="both", expand=True)
+
+        backbutton = Button(master=bstukken_frame, text='<', command=self.show_start_frame)
+        backbutton.pack(padx=20, pady=20)
+
+        ID_label = Label(master=bstukken_frame, text="Hier kan je reserveren")
+        ID_label.pack(side="left")
+
+
+        #
+        # Hier moet de werkende funcite die voor de reservatie van een kunst stuk is
+        #
+        def handle_reseveer_button():
+            #print(f"ID: {ID_field.get()}")
+            # if iets???
+            self.show_ghmenu_frame()
+
+        login_button = Button(master=bstukken_frame, text='Reseveer', command=handle_reseveer_button)
+        login_button.pack(padx=20, pady=20)
+
+        return bstukken_frame
+
+
 
 
 app = App("Rijksmuseum")
