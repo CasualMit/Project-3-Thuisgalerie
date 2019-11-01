@@ -235,5 +235,6 @@ class App:
         return bstukken_frame
 
 
+
 app = App("Rijksmuseum")
 app.start()
