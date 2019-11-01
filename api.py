@@ -91,9 +91,6 @@ def request(objects):
         break
 
 
-
-
-
 request('artObjects')
 keep_reserved()
 
