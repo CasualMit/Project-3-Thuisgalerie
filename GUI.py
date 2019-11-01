@@ -1,4 +1,7 @@
 from tkinter import *
+from api import request
+
+request('artObjects')
 
 def keuzeframe():
    hoofdframe.pack_forget() #Verberg

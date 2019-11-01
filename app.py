@@ -3,7 +3,12 @@
 #
 
 from tkinter import *
-from api import *
+import json
+from PIL import Image, ImageTk
+import urllib.request
+from io import BytesIO
+from api import request, keep_reserved
+
 
 
 class App:
@@ -15,6 +20,8 @@ class App:
         self.root = Tk()
         self.root.title(title)
         self.root.geometry("800x730+500+110")
+        request('artObjects')
+        keep_reserved()
 
         self.frames = {
             'start': self.create_start_frame(),
@@ -28,10 +35,6 @@ class App:
     def hide_frames(self):
         for name, frame in self.frames.items():
             frame.pack_forget()
-
-    # def show_frame(self, name):
-    #     self.hide_frames()
-    #     self.frames[name].pack()
 
     def show_start_frame(self):
         self.hide_frames()
@@ -183,29 +186,53 @@ class App:
 
     def create_bstukken_frame(self):
         bstukken_frame = Frame(master=self.root)
-        bstukken_frame.pack(fill="both", expand=True)
+        bstukken_frame.grid(row=2)
 
         backbutton = Button(master=bstukken_frame, text='<', command=self.show_start_frame)
-        backbutton.pack(padx=20, pady=20)
+        backbutton.grid(row=0, column=1, ipadx=20, ipady=20)
 
         ID_label = Label(master=bstukken_frame, text="Hier kan je reserveren")
-        ID_label.pack(side="left")
+        ID_label.grid(row=0)
 
 
         #
         # Hier moet de werkende funcite die voor de reservatie van een kunst stuk is
         #
         def handle_reseveer_button():
-            #print(f"ID: {ID_field.get()}")
-            # if iets???
-            self.show_ghmenu_frame()
 
-        login_button = Button(master=bstukken_frame, text='Reseveer', command=handle_reseveer_button)
-        login_button.pack(padx=20, pady=20)
+            self.show_gcollectie_frame()
 
+        with open('available.txt') as json_file:
+            art_pieces = json.load(json_file)
+
+            for key, value in art_pieces.items():
+                key = key
+
+            n = 0
+            for item in art_pieces:
+                if item in art_pieces:
+                    key = key
+                    titel = art_pieces[item]['titel']
+                    artiest = art_pieces[item]['artiest']
+                    URL = art_pieces[item]['image']
+
+                    u = urllib.request.urlopen(URL)
+                    raw_data = u.read()
+                    u.close()
+
+                    im = Image.open(BytesIO(raw_data))
+                    width = 80
+                    height = 80
+                    im2 = im.resize((width, height))
+                    photo = ImageTk.PhotoImage(im2)
+
+                    img = Label(master=bstukken_frame, image=photo)
+                    img.image = photo
+                    img.grid(row=n)
+                    login_button = Button(master=bstukken_frame, text="Reserveer", command=handle_reseveer_button)
+                    login_button.grid(ipadx=20, ipady=20, row=n)
+                    n = n + 1
         return bstukken_frame
-
-
 
 
 app = App("Rijksmuseum")
