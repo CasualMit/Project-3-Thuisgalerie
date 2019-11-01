@@ -1,4 +1,7 @@
-#Version 2 Cleaner
+#
+# Version 2 Cleaner
+#
+
 from tkinter import *
 
 
