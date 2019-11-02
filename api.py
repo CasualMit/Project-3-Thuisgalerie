@@ -7,6 +7,13 @@ import time
 
 
 def api_request(key):
+    """
+        Function to only cache a specific key of api request will create a cache.txt with JSON.
+        optional keys:
+        countFacets
+        artObjects
+        facets
+    """
     apikey = 'oh7gzUCb'
     apiurl = 'https://www.rijksmuseum.nl/api/nl/collection'
     params = dict(key=apikey, ps=20, format='json')
@@ -18,7 +25,9 @@ def api_request(key):
 
 
 def check_cache(filename, key='artObjects'):
-    # check if the cache is older than an hour to prevent too many api calls
+    """ check if the cache is older than an hour to prevent too many api calls.
+     returns True or False.
+     If no cache is present it will request one. """
     if os.path.isfile(filename):
         creation_time = os.path.getmtime(filename)
         now = time.time()
@@ -31,7 +40,10 @@ def check_cache(filename, key='artObjects'):
     else:
         api_request(key)
 
+
+
 def check_reservedfile():
+    """ Here is checked if reserved.txt exists this is needed in the keep_reserved function """
     while True:
         if os.path.isfile('reserved.txt'):
             with open('reserved.txt') as json_file:
@@ -43,7 +55,10 @@ def check_reservedfile():
                 json.dump(empty_json, outfile)
 
 
-def keep_reserved():
+def maintain_items():
+    """ This function will make sure to keep items that are reserved reserved.
+    And will remove the reserved items from the file available.txt """
+
     with open('cache.txt') as json_file:
         cache = json.load(json_file)
 
@@ -64,6 +79,8 @@ def keep_reserved():
 
 
 def request(objects):
+    """ This is the request our program will need to have all the files necessary
+    """
     check = check_cache('cache.txt')
     while check:
         with open('cache.txt') as json_file:
@@ -92,5 +109,5 @@ def request(objects):
 
 
 request('artObjects')
-keep_reserved()
+maintain_items()
 

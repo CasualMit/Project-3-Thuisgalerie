@@ -7,7 +7,7 @@ import json
 from PIL import Image, ImageTk
 import urllib.request
 from io import BytesIO
-from api import request, keep_reserved
+from api import request, maintain_items
 
 
 
@@ -19,10 +19,10 @@ class App:
 
         self.root = Tk()
         self.root.title(title)
-        self.root.geometry("800x730+500+110")
+        self.root.geometry("1200x768+500+110")
         self.root.resizable(FALSE, FALSE)
         request('artObjects')
-        keep_reserved()
+        maintain_items()
 
         self.frames = {
             'start': self.create_start_frame(),
@@ -30,7 +30,8 @@ class App:
             'art': self.create_art_frame(),
             'houder': self.create_ghouder_frame(),
             'ghmenu': self.create_ghmenu_frame(),
-            'bstukken': self.create_bstukken_frame()
+            'bstukken': self.create_bstukken_frame(),
+            'gcollectie': self.create_gcollectie_frame()
         }
 
     def hide_frames(self):
@@ -60,6 +61,10 @@ class App:
     def show_bstukken_frame(self):
         self.hide_frames()
         self.frames['bstukken'].grid()
+
+    def show_gcollectie_frame(self):
+        self.hide_frames()
+        self.frames['gcollectie'].grid()
 
     def start(self):
         self.show_start_frame()
@@ -97,16 +102,16 @@ class App:
         backbutton.grid(padx=20, pady=20)
 
         name_label = Label(master=visitor_frame, text="Uw naam:")
-        name_label.grid(row=0)
+        name_label.grid(row=1)
 
         name_field = Entry(master=visitor_frame)
-        name_field.grid(padx=20, pady=20, row=0, column=1)
+        name_field.grid(padx=20, pady=20, row=1, column=1)
 
         email_label = Label(master=visitor_frame, text="Uw email:")
-        email_label.grid(row=1)
+        email_label.grid(row=2)
 
         email_field = Entry(master=visitor_frame)
-        email_field.grid(padx=20, pady=20, row=1, column=1)
+        email_field.grid(padx=20, pady=20, row=2, column=1)
 
 #
 # Hier moet de werkende funcite die voor de login van de bezoeker is
@@ -175,7 +180,7 @@ class App:
 
         Buttontwo = Button(master=ghmenu_frame, text="Mijn stukken", background='yellow', foreground='black',
                            font=('Helvetica', 16, 'bold italic'), width=20, height=30,
-                           command=self.show_ghouder_frame)
+                           command=self.show_gcollectie_frame)
         Buttontwo.grid(row=0, column=1)
 
         Buttonthree = Button(master=ghmenu_frame, text="Bezoekers", background='orange', foreground='black',
@@ -204,20 +209,21 @@ class App:
             self.show_gcollectie_frame()
 
         with open('available.txt') as json_file:
-            art_pieces = json.load(json_file)
+            reserved_pieces = json.load(json_file)
 
-            for key, value in art_pieces.items():
+            for key, value in reserved_pieces.items():
                 key = key
 
+            c = 1
             r_img = 2
             r_button = 3
-            c = 1
-            for item in art_pieces:
-                if item in art_pieces:
+            titel_text = 4
+            for item in reserved_pieces:
+                if item in reserved_pieces:
                     key = key
-                    titel = art_pieces[item]['titel']
-                    artiest = art_pieces[item]['artiest']
-                    URL = art_pieces[item]['image']
+                    titel = reserved_pieces[item]['titel']
+                    artiest = reserved_pieces[item]['artiest']
+                    URL = reserved_pieces[item]['image']
 
                     u = urllib.request.urlopen(URL)
                     raw_data = u.read()
@@ -232,16 +238,68 @@ class App:
                     img = Label(master=bstukken_frame, image=photo)
                     img.image = photo
                     img.grid(row=r_img, column=c)
-                    login_button = Button(master=bstukken_frame, text="Reserveer", command=handle_reseveer_button)
-                    login_button.grid(ipadx=20, ipady=20, row=r_button, column=c)
+                    reserveer_button = Button(master=bstukken_frame, text=f"Reserveer", command=handle_reseveer_button)
+                    reserveer_button.grid(ipadx=2, ipady=2, row=r_button, column=c)
+                    titel = label(master=bstukken_frame, text=f"{titel} van {artiest}")
+                    titel.grid(ipadx=2, ipady=2, row=titel_text, column=c)
 
                     c = c + 1
-                    while c > 5:
+                    while c > 3:
                         r_img = r_img + 2
                         r_button = r_button + 2
+                        titel_text = titel_text + 2
                         c = 1
         return bstukken_frame
 
+    def create_gcollectie_frame(self):
+        gcollectie_frame = Frame(master=self.root)
+        gcollectie_frame.grid(row=2)
+
+        backbutton = Button(master=gcollectie_frame, text='<', command=self.show_start_frame)
+        backbutton.grid(row=0, ipadx=20, ipady=20)
+
+        ID_label = Label(master=gcollectie_frame, text="Dit zijn jouw gereserveerde kunststukken.")
+        ID_label.grid(row=0, column=2)
+
+
+        #
+        # Hier moet de werkende funcite die voor de reservatie van een kunst stuk is
+        #
+
+        with open('reserved.txt') as json_file:
+            reserved_pieces = json.load(json_file)
+
+            for key, value in reserved_pieces.items():
+                key = key
+
+            r_img = 2
+            c = 1
+            for item in reserved_pieces:
+                if item in reserved_pieces:
+                    key = key
+                    titel = reserved_pieces[item]['titel']
+                    artiest = reserved_pieces[item]['artiest']
+                    URL = reserved_pieces[item]['image']
+
+                    u = urllib.request.urlopen(URL)
+                    raw_data = u.read()
+                    u.close()
+
+                    im = Image.open(BytesIO(raw_data))
+                    width = 80
+                    height = 80
+                    im2 = im.resize((width, height))
+                    photo = ImageTk.PhotoImage(im2)
+
+                    img = Label(master=gcollectie_frame, image=photo)
+                    img.image = photo
+                    img.grid(row=r_img, column=c)
+
+                    c = c + 1
+                    while c > 3:
+                        r_img = r_img + 2
+                        c = 1
+        return gcollectie_frame
 
 
 app = App("Rijksmuseum")
