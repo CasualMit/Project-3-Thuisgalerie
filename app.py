@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 import urllib.request
 from io import BytesIO
 from api import request, maintain_items
+from functools import partial
 
 
 
@@ -120,7 +121,7 @@ class App:
             print(f"naam: {name_field.get()} email: {email_field.get()}")
             # if iets???
             self.show_art_frame()
-        
+
         login_button = Button(master=visitor_frame, text='Aanmelden', command=handle_login_button)
         login_button.grid(padx=20, pady=20)
 
@@ -158,9 +159,10 @@ class App:
 # Hier moet de werkende funcite die voor de login van de gallerie houder is1
 #
         def handle_login_button():
-            print(f"ID: {ID_field.get()}")
+            gh_id = ID_field.get()
             # if iets???
             self.show_ghmenu_frame()
+            return gh_id
 
         login_button = Button(master=ghouder_frame, text='Login', command=handle_login_button)
         login_button.grid(padx=20, pady=20)
@@ -204,7 +206,28 @@ class App:
         #
         # Hier moet de werkende funcite die voor de reservatie van een kunst stuk is
         #
-        def handle_reseveer_button():
+        def handle_reseveer_button(id):
+            gh_id = self.create_ghouder_frame()
+            with open('available.txt') as json_file:
+                available = json.load(json_file)
+            with open('reserved.txt') as json_file:
+                reserved = json.load(json_file)
+
+            reserved = reserved
+            for key in available:
+                 if key == id:
+                    print(id)
+                    print(item)
+                    print(reserved)
+                    print(gh_id)
+
+                    reserved[item['id']] = item
+
+                    with open('cache.txt', 'w') as outfile:
+                        json.dump(new_format, outfile)
+                    print('Made the request usable!')
+            print(reserved)
+
 
             self.show_gcollectie_frame()
 
@@ -218,6 +241,8 @@ class App:
             r_img = 2
             r_button = 3
             titel_text = 4
+            q = 0
+            button_id = []
             for item in reserved_pieces:
                 if item in reserved_pieces:
                     key = key
@@ -235,19 +260,17 @@ class App:
                     im2 = im.resize((width, height))
                     photo = ImageTk.PhotoImage(im2)
 
-                    img = Label(master=bstukken_frame, image=photo)
+                    img = Button(master=bstukken_frame, image=photo, command=partial(handle_reseveer_button, item))
                     img.image = photo
                     img.grid(row=r_img, column=c)
-                    reserveer_button = Button(master=bstukken_frame, text=f"Reserveer", command=handle_reseveer_button)
-                    reserveer_button.grid(ipadx=2, ipady=2, row=r_button, column=c)
-                    titel = label(master=bstukken_frame, text=f"{titel} van {artiest}")
-                    titel.grid(ipadx=2, ipady=2, row=titel_text, column=c)
+                    button_id.append(img)
+                    # titel = Label(master=bstukken_frame, text=f"{titel} van {artiest}")
+                    # titel.grid(ipadx=2, ipady=2, row=titel_text, column=c)
 
-                    c = c + 1
+                    c += 1
                     while c > 3:
-                        r_img = r_img + 2
-                        r_button = r_button + 2
-                        titel_text = titel_text + 2
+                        r_img += 2
+                        titel_text += 1
                         c = 1
         return bstukken_frame
 
