@@ -17,12 +17,20 @@ class App:
         # self.art_frame = None
         # self.visitor_frame = None
 
+        """
+           Here we define standard settings that wil be used through out the whole app
+        """
+
         self.root = Tk()
         self.root.title(title)
         self.root.geometry("1200x768+500+110")
         self.root.resizable(FALSE, FALSE)
         request('artObjects')
         maintain_items()
+
+        """
+            Here we create a dictonairy for each frame we show in the app
+        """
 
         self.frames = {
             'start': self.create_start_frame(),
@@ -33,6 +41,10 @@ class App:
             'bstukken': self.create_bstukken_frame(),
             'gcollectie': self.create_gcollectie_frame()
         }
+
+    """
+        Here we define for each screen you what action should be taken to be able to show the correct screen
+    """
 
     def hide_frames(self):
         for name, frame in self.frames.items():
@@ -70,9 +82,11 @@ class App:
         self.show_start_frame()
         self.root.mainloop()
 
-    #
-    # Begin scherm bezoeker of gallerie houder
-    #
+    """
+        This is the first screen users will be able to see when they startup the app
+        with 2 buttons one for the gallery holders and the other for the visitors
+    """
+
     def create_start_frame(self):
         start_frame = Frame(master=self.root)
         start_frame.grid()
@@ -88,9 +102,10 @@ class App:
 
         return start_frame
 
-    #
-    # Dit is het login scherm van de bezoeker
-    #
+    """
+        Here we created the login page for the visitors where they have to fill in their Name and Email
+    """
+
     def create_visitor_frame(self):
         visitor_frame = Frame(master=self.root)
         visitor_frame.grid()
@@ -110,9 +125,10 @@ class App:
         email_field = Entry(master=visitor_frame)
         email_field.grid(padx=20, pady=20, row=2, column=1)
 
-        #
-        # Hier moet de werkende funcite die voor de login van de bezoeker is
-        #
+        """
+            This is the function for when the visitor presses login
+        """
+
         def handle_login_button():
             print(f"naam: {name_field.get()} email: {email_field.get()}")
             # if iets???
@@ -123,9 +139,10 @@ class App:
 
         return visitor_frame
 
-    #
-    # Hier moet alle stukken komen waar ze naar toe kunnen
-    #
+    """
+        This is the function for when the visitor presses login
+    """
+
     def create_art_frame(self):
         art_frame = Frame(master=self.root)
         art_frame.grid()
@@ -153,9 +170,10 @@ class App:
         ID_field = Entry(master=ghouder_frame)
         ID_field.grid(padx=20, pady=20, row=1, column=1)
 
-        #
-        # Hier moet de werkende funcite die voor de login van de gallerie houder is1
-        #
+        """
+            This is the function for when the gallary holder presses login
+        """
+
         def handle_login_button():
             global gh_id
             gh_id = ID_field.get()
