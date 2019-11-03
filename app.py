@@ -218,9 +218,9 @@ class App:
         ID_label = Label(master=bstukken_frame, text="Hier kan je reserveren")
         ID_label.grid(row=0, column=2)
 
-        #
-        # Hier moet de werkende funcite die voor de reservatie van een kunst stuk is
-        #
+        """
+            This is the function to reserve a art piece
+        """
 
         def handle_reseveer_button(id):
             global gh_id
@@ -283,6 +283,10 @@ class App:
                         c = 1
         return bstukken_frame
 
+    """
+        This is to create the collection frame from a gallery holder
+    """
+
     def create_gcollectie_frame(self):
         gcollectie_frame = Frame(master=self.root)
         gcollectie_frame.grid(row=2)
@@ -293,9 +297,9 @@ class App:
         ID_label = Label(master=gcollectie_frame, text="Dit zijn jouw gereserveerde kunststukken.")
         ID_label.grid(row=0, column=2)
 
-        #
-        # Hier moet de werkende funcite die voor de reservatie van een kunst stuk is
-        #
+        """
+            This is the function to gather the information to show to correct art pieces that the gallery holder reserved
+        """
 
         global gh_id
         gh_id = "test1"
