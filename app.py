@@ -11,7 +11,6 @@ from api import request, maintain_items
 from functools import partial
 
 
-
 class App:
     def __init__(self, title):
         # self.start_frame = None
@@ -71,9 +70,9 @@ class App:
         self.show_start_frame()
         self.root.mainloop()
 
-#
-# Begin scherm bezoeker of gallerie houder
-#
+    #
+    # Begin scherm bezoeker of gallerie houder
+    #
     def create_start_frame(self):
         start_frame = Frame(master=self.root)
         start_frame.grid()
@@ -89,15 +88,12 @@ class App:
 
         return start_frame
 
-#
-# Dit is het login scherm van de bezoeker
-#
+    #
+    # Dit is het login scherm van de bezoeker
+    #
     def create_visitor_frame(self):
         visitor_frame = Frame(master=self.root)
         visitor_frame.grid()
-
-        # button = Button(master=visitor_frame, text="fuck you")
-        # button.grid()
 
         backbutton = Button(master=visitor_frame, text='<', command=self.show_start_frame)
         backbutton.grid(padx=20, pady=20)
@@ -114,9 +110,9 @@ class App:
         email_field = Entry(master=visitor_frame)
         email_field.grid(padx=20, pady=20, row=2, column=1)
 
-#
-# Hier moet de werkende funcite die voor de login van de bezoeker is
-#
+        #
+        # Hier moet de werkende funcite die voor de login van de bezoeker is
+        #
         def handle_login_button():
             print(f"naam: {name_field.get()} email: {email_field.get()}")
             # if iets???
@@ -127,9 +123,9 @@ class App:
 
         return visitor_frame
 
-#
-# Hier moet alle stukken komen waar ze naar toe kunnen
-#
+    #
+    # Hier moet alle stukken komen waar ze naar toe kunnen
+    #
     def create_art_frame(self):
         art_frame = Frame(master=self.root)
         art_frame.grid()
@@ -139,9 +135,11 @@ class App:
 
         return art_frame
 
-#
-# Dit is het login scherm van de gallerie houder
-#
+    #
+    # Dit is het login scherm van de gallerie houder
+    #
+    gh_id = 0
+
     def create_ghouder_frame(self):
         ghouder_frame = Frame(master=self.root)
         ghouder_frame.grid()
@@ -155,23 +153,23 @@ class App:
         ID_field = Entry(master=ghouder_frame)
         ID_field.grid(padx=20, pady=20, row=1, column=1)
 
-#
-# Hier moet de werkende funcite die voor de login van de gallerie houder is1
-#
+        #
+        # Hier moet de werkende funcite die voor de login van de gallerie houder is1
+        #
         def handle_login_button():
+            global gh_id
             gh_id = ID_field.get()
             # if iets???
             self.show_ghmenu_frame()
-            return gh_id
 
         login_button = Button(master=ghouder_frame, text='Login', command=handle_login_button)
         login_button.grid(padx=20, pady=20)
 
         return ghouder_frame
 
-#
-# Menu voor de gallerie houder
-#
+    #
+    # Menu voor de gallerie houder
+    #
     def create_ghmenu_frame(self):
         ghmenu_frame = Frame(master=self.root)
         ghmenu_frame.grid()
@@ -186,8 +184,8 @@ class App:
         Buttontwo.grid(row=0, column=1)
 
         Buttonthree = Button(master=ghmenu_frame, text="Bezoekers", background='orange', foreground='black',
-                           font=('Helvetica', 16, 'bold italic'), width=20, height=30,
-                           command=self.show_ghouder_frame)
+                             font=('Helvetica', 16, 'bold italic'), width=20, height=30,
+                             command=self.show_ghouder_frame)
         Buttonthree.grid(row=0, column=2)
 
         return ghmenu_frame
@@ -202,34 +200,27 @@ class App:
         ID_label = Label(master=bstukken_frame, text="Hier kan je reserveren")
         ID_label.grid(row=0, column=2)
 
-
         #
         # Hier moet de werkende funcite die voor de reservatie van een kunst stuk is
         #
+
         def handle_reseveer_button(id):
-            gh_id = self.create_ghouder_frame()
+            global gh_id
             with open('available.txt') as json_file:
                 available = json.load(json_file)
             with open('reserved.txt') as json_file:
                 reserved = json.load(json_file)
 
-            reserved = reserved
-            for key in available:
-                 if key == id:
-                    print(id)
-                    print(item)
-                    print(reserved)
-                    print(gh_id)
+            temp = {}
+            for key, value in available.items():
+                if key == id:
+                    temp[id] = available[key]
+                    reserved[gh_id] = temp
 
-                    reserved[item['id']] = item
+                    with open('reserved.txt', 'w') as outfile:
+                        json.dump(reserved, outfile)
 
-                    with open('cache.txt', 'w') as outfile:
-                        json.dump(new_format, outfile)
-                    print('Made the request usable!')
-            print(reserved)
-
-
-            self.show_gcollectie_frame()
+        #self.show_gcollectie_frame()
 
         with open('available.txt') as json_file:
             reserved_pieces = json.load(json_file)
@@ -284,25 +275,28 @@ class App:
         ID_label = Label(master=gcollectie_frame, text="Dit zijn jouw gereserveerde kunststukken.")
         ID_label.grid(row=0, column=2)
 
-
         #
         # Hier moet de werkende funcite die voor de reservatie van een kunst stuk is
         #
 
+        global gh_id
+        gh_id = "test1"
         with open('reserved.txt') as json_file:
             reserved_pieces = json.load(json_file)
 
             for key, value in reserved_pieces.items():
-                key = key
+                kunst_id = value
+                for key in kunst_id:
+                    kunst_id = key
 
             r_img = 2
             c = 1
             for item in reserved_pieces:
                 if item in reserved_pieces:
                     key = key
-                    titel = reserved_pieces[item]['titel']
-                    artiest = reserved_pieces[item]['artiest']
-                    URL = reserved_pieces[item]['image']
+                    titel = reserved_pieces[item][kunst_id]['titel']
+                    artiest = reserved_pieces[item][kunst_id]['artiest']
+                    URL = reserved_pieces[item][kunst_id]['image']
 
                     u = urllib.request.urlopen(URL)
                     raw_data = u.read()

@@ -16,7 +16,7 @@ def api_request(key):
     """
     apikey = 'oh7gzUCb'
     apiurl = 'https://www.rijksmuseum.nl/api/nl/collection'
-    params = dict(key=apikey, ps=20, format='json')
+    params = dict(key=apikey, ps=4, format='json')
     request = requests.get(apiurl, params=params)
     res = request.json()
     pieces = res[key]
@@ -64,10 +64,15 @@ def maintain_items():
 
     reserved = check_reservedfile()
 
+    for key, value in reserved.items():
+        kunst_id = value
+        for key in kunst_id:
+            kunst_id = key
+
     reserved_art_pieces = set()
     for reserved_item in reserved:
-        if reserved_item in cache:
-            reserved_art_pieces.add(reserved_item)
+        if kunst_id in cache:
+            reserved_art_pieces.add(kunst_id)
 
     available_art_pieces = dict()
     for item in cache:
@@ -75,7 +80,6 @@ def maintain_items():
             available_art_pieces[item] = cache[item]
     with open('available.txt', 'w') as outfile:
         json.dump(available_art_pieces, outfile)
-
 
 
 def request(objects):
