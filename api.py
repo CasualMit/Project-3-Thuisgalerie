@@ -1,9 +1,7 @@
 import requests
-import pprint
 import json
 import os
 import time
-# api_request('artObjects')
 
 
 def api_request(key):
@@ -16,7 +14,7 @@ def api_request(key):
     """
     apikey = 'oh7gzUCb'
     apiurl = 'https://www.rijksmuseum.nl/api/nl/collection'
-    params = dict(key=apikey, ps=4, format='json')
+    params = dict(key=apikey, ps=4, format='json')  # ps defines the amount of results
     request = requests.get(apiurl, params=params)
     res = request.json()
     pieces = res[key]
@@ -39,20 +37,6 @@ def check_cache(filename, key='artObjects'):
             return True
     else:
         api_request(key)
-
-
-
-def check_reservedfile():
-    """ Here is checked if reserved.txt exists this is needed in the keep_reserved function """
-    while True:
-        if os.path.isfile('reserved.txt'):
-            with open('reserved.txt') as json_file:
-                reserved = json.load(json_file)
-            return reserved
-        else:
-            empty_json = dict()
-            with open('reserved.txt', 'w') as outfile:
-                json.dump(empty_json, outfile)
 
 
 def maintain_items():
@@ -82,6 +66,19 @@ def maintain_items():
         json.dump(available_art_pieces, outfile)
 
 
+def check_reservedfile():
+    """ Here is checked if reserved.txt exists this is needed in the keep_reserved function """
+    while True:
+        if os.path.isfile('reserved.txt'):
+            with open('reserved.txt') as json_file:
+                reserved = json.load(json_file)
+            return reserved
+        else:
+            empty_json = dict()
+            with open('reserved.txt', 'w') as outfile:
+                json.dump(empty_json, outfile)
+
+
 def request(objects):
     """ This is the request our program will need to have all the files necessary
     """
@@ -90,7 +87,6 @@ def request(objects):
         with open('cache.txt') as json_file:
             cache = json.load(json_file)
         if type(cache) is dict and cache.get('formatted') is not None:
-            print('File cache.txt is ready to use!')
             break
         else:
             new_format = dict()
@@ -103,15 +99,12 @@ def request(objects):
             new_format['formatted'] = True
             with open('cache.txt', 'w') as outfile:
                 json.dump(new_format, outfile)
-            print('Made the request usable!')
             continue
     while not check:
         api_request(objects)
-        print('Made a new request from the api!')
         request('artObjects')
         break
 
 
 request('artObjects')
 maintain_items()
-
